@@ -1,106 +1,90 @@
-# MACSLang: An Educational Programming Language and Interpreter
+# MACSLang
 
-## Abstract
-
-MACSLang is a didactic, structured, statically-typed programming language, originally specified by Professor Marco Antônio, and fully implemented in C by Vinicius Costa.
-This repository contains a complete interpreter for MACSLang, including a lexical analyzer (lexer), syntactic analyzer (parser), AST construction, and a tree-walking interpreter.
+**MACSLang** é um interpretador desenvolvido para a disciplina de compiladores na UNI-BH, inspirado na definição original proposta pelo Professor Marco Antônio. O projeto implementa uma linguagem imperativa, estruturada, com tipagem estática e sintaxe enxuta, capaz de expressar programas educacionais, exemplos didáticos e algoritmos clássicos.
 
 ---
 
-## Objectives
+## Créditos
 
-* Demonstrate the construction of a simple compiler/interpreter pipeline (lexer, parser, interpreter).
-* Provide a minimal language for educational purposes, covering variables, types, functions, loops, conditionals, and I/O.
-* Serve as a foundation for further academic experiments with language and compiler design.
-
----
-
-## Project Architecture
-
-**The interpreter is organized in four main modules:**
-
-* **lexer.c / lexer.h**
-  Tokenizes MACSLang source code, identifying keywords, identifiers, literals, and operators.
-
-* **parser.c / parser.h**
-  Builds an Abstract Syntax Tree (AST) from the token sequence, according to MACSLang’s grammar.
-
-* **interpreter.c / interpreter.h**
-  Executes the AST, managing environments, variables (global and local), function calls, control flow, and input/output.
-
-* **main.c**
-  Entry point; loads the program from file, initializes components, and invokes the interpreter.
-
-**File Structure:**
-
-```text
-macslang/
-├── main.c
-├── lexer.h / lexer.c
-├── parser.h / parser.c
-├── interpreter.h / interpreter.c
-├── exemplos/
-│   ├── hello.macslang
-│   ├── fatorial.macslang
-│   ├── for.macslang
-│   ├── sum.macslang
-│   ├── ifelse.macslang
-│   └── all_features.macslang
-└── README.md
-```
+* **Definição original da linguagem:** Prof. Marco Antônio (UNI-BH)
+* **Desenvolvimento do interpretador:** Vinicius Costa
 
 ---
 
-## Language Grammar (Formal EBNF)
+## Sumário
 
-Below is a simplified EBNF description of MACSLang’s syntax:
+* [Descrição](#descrição)
+* [Características da Linguagem](#características-da-linguagem)
+* [Gramática](#gramática)
+* [Exemplos de código MACSLang](#exemplos-de-código-macslang)
+* [Arquitetura do Projeto](#arquitetura-do-projeto)
+* [Como compilar e executar](#como-compilar-e-executar)
+* [Detalhes de implementação](#detalhes-de-implementação)
+
+---
+
+## Descrição
+
+MACSLang é uma linguagem de programação imperativa e estruturada, de sintaxe clara e amigável, desenvolvida para fins acadêmicos. O projeto inclui **analisador léxico, sintático e interpretador**, suportando variáveis, controle de fluxo, funções, entrada/saída, operações aritméticas, booleanas e manipulação de strings.
+
+---
+
+## Características da Linguagem
+
+* **Paradigma:** Imperativo, estruturado
+* **Tipagem:** Estática
+* **Tipos primitivos:** `int`, `string`, `bool`
+* **Operadores:** Aritméticos, relacionais, lógicos e concatenação de strings
+* **Controle de fluxo:** `if`, `else`, `while`, `for`
+* **Funções:** Definição, chamada, recursão, parâmetros e retorno
+* **Entrada e saída:** `input()`, `print()`
+* **Comentários:** Suporte a `//` para comentários de linha
+
+---
+
+## Gramática Resumida (EBNF)
 
 ```ebnf
-program         ::= { statement }
+program           = { statement } ;
+statement         = var_decl | assignment | func_decl | func_call | print_stmt | input_stmt
+                  | if_stmt | while_stmt | for_stmt | return_stmt ;
 
-statement       ::= var_decl | assignment | func_decl | if_stmt | while_stmt | for_stmt | print_stmt | input_stmt | return_stmt | expr_stmt
+var_decl          = "var" identifier ":" type [ "=" expr ] ";" ;
+assignment        = identifier "=" expr ";" ;
+func_decl         = "func" identifier "(" [ param_list ] ")" ":" type block ;
+param_list        = identifier ":" type { "," identifier ":" type } ;
+func_call         = identifier "(" [ expr { "," expr } ] ")" ";" ;
 
-var_decl        ::= "var" identifier ":" type [ "=" expression ] ";"
-assignment      ::= identifier "=" expression ";"
-func_decl       ::= "func" identifier "(" [ param_list ] ")" ":" type block
-param_list      ::= param { "," param }
-param           ::= identifier ":" type
-block           ::= "{" { statement } "}"
+print_stmt        = "print" "(" expr ")" ";" ;
+input_stmt        = "input" "(" identifier ")" ";" ;
+return_stmt       = "return" expr ";" ;
 
-if_stmt         ::= "if" "(" expression ")" block [ "else" block ]
-while_stmt      ::= "while" "(" expression ")" block
-for_stmt        ::= "for" "(" var_decl expression ";" assignment ")" block
-print_stmt      ::= "print" "(" expression ")" ";"
-input_stmt      ::= "input" "(" identifier ")" ";"
-return_stmt     ::= "return" expression ";"
-expr_stmt       ::= expression ";"
+if_stmt           = "if" "(" expr ")" block [ "else" block ] ;
+while_stmt        = "while" "(" expr ")" block ;
+for_stmt          = "for" "(" (var_decl | assignment) expr ";" assignment ")" block ;
 
-type            ::= "int" | "string" | "bool"
-expression      ::= literal
-                 | identifier
-                 | expression binop expression
-                 | identifier "(" [ arg_list ] ")"
-                 | "(" expression ")"
-arg_list        ::= expression { "," expression }
-literal         ::= integer | string | "true" | "false"
-binop           ::= "+" | "-" | "*" | "/" | "%" | "<" | "<=" | ">" | ">=" | "==" | "!="
+block             = "{" { statement } "}" ;
+expr              = ... (expressões aritméticas, relacionais, booleanas, concatenação) ...
+
+type              = "int" | "string" | "bool" ;
+identifier        = [a-zA-Z_][a-zA-Z0-9_]* ;
 ```
 
 ---
 
-## Supported Features
+## Exemplos de código MACSLang
 
-* **Static typing:** `int`, `string`, `bool`
-* **Variable declaration/assignment:** global and local (block) scope
-* **Functions:** first-class, with parameters and return, recursion allowed
-* **Control structures:** `if/else`, `while`, `for`
-* **Operators:** arithmetic, relational, logical, string concatenation
-* **Input/output:** `print()`, `input()`
-* **Block scoping:** each `{ ... }` introduces a new variable scope
+**Hello World e leitura de nome**
 
----
+```macslang
+print("Hello, world!");
+print("What is your name?");
+var name: string;
+input(name);
+print("Welcome, " + name + "!");
+```
 
-## Example Program
+**Fatorial (recursivo)**
 
 ```macslang
 func factorial(n: int): int {
@@ -110,70 +94,164 @@ func factorial(n: int): int {
         return n * factorial(n - 1);
     }
 }
-print("Enter your name:");
-var name: string;
-input(name);
+
 print("Enter a number:");
 var num: int;
 input(num);
 var fact: int = factorial(num);
-print("Hello, " + name + "! Factorial of " + num + " is " + fact);
+print("Factorial of " + num + " is " + fact);
+```
+
+**For e if/else**
+
+```macslang
+print("Counting from 1 to 5:");
+for (var i: int = 1; i <= 5; i = i + 1) {
+    print(i);
+}
+
+print("Enter a number:");
+var n: int;
+input(n);
+if (n % 2 == 0) {
+    print("Even");
+} else {
+    print("Odd");
+}
+```
+
+**All features demo**
+
+```macslang
+// Factorial (recursion)
+func factorial(n: int): int {
+    if (n <= 1) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+// String repetition
+func repeat(s: string, times: int): string {
+    var result: string = "";
+    var i: int = 0;
+    while (i < times) {
+        result = result + s;
+        i = i + 1;
+    }
+    return result;
+}
+
+// Is even
+func is_even(x: int): bool {
+    if (x % 2 == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+print("=== MACSLang All Features Demo ===");
+
+print("Type your name:");
+var name: string;
+input(name);
+
+print("Type an integer:");
+var num: int;
+input(num);
+
+var fact: int = factorial(num);
+print("Hello, " + name + "! The factorial of " + num + " is " + fact);
+
+if (is_even(num)) {
+    print(num + " is even!");
+} else {
+    print(num + " is odd!");
+}
+
+print("Printing your name 3 times with for:");
+for (var i: int = 0; i < 3; i = i + 1) {
+    print((i + 1) + ": " + name);
+}
+
+print("Repeating '*' character:");
+var stars: string = repeat("*", num);
+print(stars);
+
+// Boolean test and print
+var flag: bool = false;
+if (fact > 100) {
+    flag = true;
+}
+print("Is factorial greater than 100? " + flag);
 ```
 
 ---
 
-## Building the Interpreter
+## Arquitetura do Projeto
 
-**Requirements:**
-
-* GCC or Clang C compiler (Linux or macOS)
-* Terminal
-
-**To compile:**
-
-```sh
-gcc main.c lexer.c parser.c interpreter.c -o macslang
-# or
-clang main.c lexer.c parser.c interpreter.c -o macslang
 ```
-
-**To run:**
-
-```sh
-./macslang exemplos/all_features.macslang
+macslang/
+│
+├── main.c            # Ponto de entrada, gerencia fluxo principal
+├── lexer.h/.c        # Analisador léxico (tokeniza o código fonte)
+├── parser.h/.c       # Analisador sintático (constrói AST)
+├── interpreter.h/.c  # Interpretador (executa AST)
+├── exemplos/         # Exemplos de códigos MACSLang
+│     └── *.macslang
+└── README.md         # Este arquivo
 ```
 
 ---
 
-## How the Interpreter Works
+## Como compilar e executar
 
-1. **Lexical Analysis:**
-   The source file is read and tokenized; each token is classified as keyword, identifier, literal, or operator.
+1. **Pré-requisitos:**
+   GCC ou Clang (Linux, macOS, Windows WSL, Apple Silicon OK)
 
-2. **Parsing:**
-   The parser processes the token sequence, building an Abstract Syntax Tree (AST) that captures the program’s structure and relationships.
+2. **Compilação:**
 
-3. **Interpretation:**
-   The AST is traversed recursively. Variable scope is managed as a stack of symbol tables; function calls push/pop scopes and manage parameters and returns. Expressions and statements are evaluated/executed accordingly.
+   ```sh
+   clang main.c lexer.c parser.c interpreter.c -o macslang
+   # ou
+   gcc main.c lexer.c parser.c interpreter.c -o macslang
+   ```
 
----
+3. **Execução:**
 
-## Extending MACSLang
-
-* Add keywords or types in `lexer.h` and parser logic.
-* Extend the AST in `parser.h`/`parser.c` for new constructs.
-* Implement new operations or statements in `interpreter.c`.
-
----
-
-## Troubleshooting
-
-* **Undefined variable/function:** Ensure all identifiers are declared in accessible scope.
-* **Syntax error:** Double-check your code matches the MACSLang grammar.
-* **Compilation error:** Make sure you are using a C99-compatible compiler and all source files are present.
+   ```sh
+   ./macslang exemplos/hello.macslang
+   ./macslang exemplos/fatorial.macslang
+   ./macslang exemplos/all_features.macslang
+   ```
 
 ---
 
-## Credits
+## Detalhes de Implementação
 
-Developed by **Vinicius Costa**, based on the MACSLang language definition by **Professor Marco Antônio**, for educational and academic purposes.
+* **Lexer:**
+  Ignora espaços, tabulações e comentários (`//`). Reconhece palavras-chave, identificadores, números, strings, operadores, delimitadores.
+
+* **Parser:**
+  Constrói uma árvore sintática abstrata (AST) a partir dos tokens. Permite declarações de variáveis, funções, expressões e controle de fluxo em qualquer ordem. Tipos suportados: `int`, `string`, `bool`.
+
+* **Interpretador:**
+  Executa a AST em tempo real, realizando avaliação de expressões, controle de variáveis, chamadas de função, recursão, controle de fluxo, entrada/saída e manipulação de strings e booleanos.
+
+---
+
+## Observações Acadêmicas
+
+* **O projeto foi construído com foco didático**, priorizando clareza de implementação e extensibilidade.
+* O interpretador é modular, facilitando inclusão de novos tipos, operadores e comandos.
+* **Agradecimento ao Prof. Marco Antônio** pela inspiração na definição da linguagem.
+
+---
+
+## Licença
+
+Uso acadêmico, livre para fins educacionais e aprimoramento.
+
+---
