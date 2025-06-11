@@ -1,0 +1,13 @@
+func factorial(n: int): int {
+    var result: int = 1;
+    for (var i: int = 1; i <= n; i = i + 1) {
+        result = result * i;
+    }
+    return result;
+}
+
+print("Enter a number:");
+var number: int;
+input(number);
+var fact: int = factorial(number);
+print("Factorial of " + number + " is " + fact);

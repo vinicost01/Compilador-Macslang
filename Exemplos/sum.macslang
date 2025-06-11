@@ -1,0 +1,6 @@
+print("Sum two numbers:");
+var a: int;
+var b: int;
+input(a);
+input(b);
+print("The sum is " + (a + b));

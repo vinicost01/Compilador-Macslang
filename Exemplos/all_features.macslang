@@ -1,0 +1,60 @@
+
+func factorial(n: int): int {
+    if (n <= 1) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+func repeat(s: string, times: int): string {
+    var result: string = "";
+    var i: int = 0;
+    while (i < times) {
+        result = result + s;
+        i = i + 1;
+    }
+    return result;
+}
+
+func is_even(x: int): bool {
+    if (x % 2 == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+print("=== MACSLang All Features Demo ===");
+
+print("Type your name:");
+var name: string;
+input(name);
+
+print("Type an integer:");
+var num: int;
+input(num);
+
+var fact: int = factorial(num);
+print("Hello, " + name + "! The factorial of " + num + " is " + fact);
+
+if (is_even(num)) {
+    print(num + " is even!");
+} else {
+    print(num + " is odd!");
+}
+
+print("Printing your name 3 times with for:");
+for (var i: int = 0; i < 3; i = i + 1) {
+    print((i + 1) + ": " + name);
+}
+
+print("Repeating '*' character:");
+var stars: string = repeat("*", num);
+print(stars);
+
+var flag: bool = false;
+if (fact > 100) {
+    flag = true;
+}
+print("Is factorial greater than 100? " + flag);
