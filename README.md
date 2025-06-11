@@ -42,7 +42,7 @@ MACSLang é uma linguagem de programação imperativa e estruturada, de sintaxe 
 
 ---
 
-## Gramática Resumida (EBNF)
+## Gramática
 
 ```ebnf
 program           = { statement } ;
@@ -220,7 +220,9 @@ macslang/
    ```
 
 3. **Execução:**
-
+   
+   
+![](macslang.gif)
    ```sh
    ./macslang exemplos/hello.macslang
    ./macslang exemplos/fatorial.macslang
