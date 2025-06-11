@@ -1,0 +1,7 @@
+//helo
+
+print("Hello, world!");
+var name: string;
+print("What is your name?");
+input(name);
+print("Welcome, " + name + "!");
