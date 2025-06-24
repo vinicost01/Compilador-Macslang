@@ -7,7 +7,7 @@
 ## Créditos
 
 * **Definição original da linguagem:** Prof. Marco Antônio (UNI-BH)
-* **Desenvolvimento do interpretador:** Vinicius Costa
+* **Desenvolvimento do interpretador:** Vinicius Costa & Daniel Eller
 
 ---
 
